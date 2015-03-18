@@ -22,9 +22,6 @@ when "macosx"
   # TODO: install via homebrew
 else
   znc_pkgs = value_for_platform(
-    [ "debian","ubuntu" ] => {
-      "default" => %w{ znc znc-dev znc-extra }# znc-webadmin}
-    },
     "default" => %w{ znc znc-dev znc-extra }
   )
 

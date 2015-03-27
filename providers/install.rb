@@ -1,8 +1,6 @@
 action :install do
   if @new_resource.from == 'package'
-    %w[znc znc-dev].each do |name|
-      package name
-    end
+    %w[znc znc-dev].each { |name| package name }
   else
     configure_options = @new_resource.configure_options.join(" ")
 
@@ -13,11 +11,9 @@ action :install do
       "default" => %w{ libssl-dev libperl-dev pkg-config libc-ares-dev }
     ).each { |dependency| package dependency }
 
-    version = node['znc']['version']
-
-    remote_file "#{Chef::Config[:file_cache_path]}/znc-#{version}.tar.gz" do
-      source "#{node['znc']['url']}/znc-#{version}.tar.gz"
-      checksum node['znc']['checksum']
+    remote_file "#{Chef::Config[:file_cache_path]}/znc-#{@new_resource.version}.tar.gz" do
+      source "#{@new_resource.url}/znc-#{@new_resource.version}.tar.gz"
+      checksum @new_resource.checksum
       mode "0644"
       not_if "which znc"
     end
@@ -25,9 +21,9 @@ action :install do
     bash "build znc" do
       cwd Chef::Config[:file_cache_path]
       code <<-EOF
-      tar -zxvf znc-#{version}.tar.gz
-      (cd znc-#{version} && ./configure #{configure_options})
-      (cd znc-#{version} && make && make install)
+      tar -zxvf znc-#{@new_resource.version}.tar.gz
+      (cd znc-#{@new_resource.version} && ./configure #{configure_options})
+      (cd znc-#{@new_resource.version} && make && make install)
       EOF
       not_if "which znc"
     end

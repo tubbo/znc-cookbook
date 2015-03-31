@@ -1,4 +1,5 @@
 actions :install
+default_action :install
 
 Boolean = [TrueClass, FalseClass]
 
